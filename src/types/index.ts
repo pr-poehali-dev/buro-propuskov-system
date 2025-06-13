@@ -42,3 +42,15 @@ export interface VisitLog {
   checkOutTime?: string;
   status: "checked-in" | "checked-out";
 }
+
+export interface Operator {
+  id: string;
+  fullName: string;
+  username: string;
+  password: string;
+  role: "admin" | "operator";
+  permissions: string[];
+  shift: "morning" | "evening" | "night";
+  status: "active" | "inactive";
+  createdAt: string;
+}

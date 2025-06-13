@@ -13,6 +13,7 @@ const Layout = () => {
     { name: "Регистрация посетителей", href: "/visitors", icon: "Users" },
     { name: "Управление сотрудниками", href: "/employees", icon: "UserCheck" },
     { name: "Управление корпусами", href: "/buildings", icon: "Building" },
+    { name: "Операторы", href: "/operators", icon: "UserCog" },
   ];
 
   return (

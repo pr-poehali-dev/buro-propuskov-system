@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Visitor, Employee, Building } from "@/types";
+import { Visitor, Employee, Building, Operator } from "@/types";
 
 export function useLocalStorage<T>(key: string, initialValue: T) {
   const [storedValue, setStoredValue] = useState<T>(() => {
@@ -114,4 +114,35 @@ export function useBuildings() {
   };
 
   return { buildings, addBuilding, updateBuilding, deleteBuilding };
+}
+
+export function useOperators() {
+  const [operators, setOperators] = useLocalStorage<Operator[]>(
+    "operators",
+    [],
+  );
+
+  const addOperator = (operator: Omit<Operator, "id" | "createdAt">) => {
+    const newOperator: Operator = {
+      ...operator,
+      id: Date.now().toString(),
+      createdAt: new Date().toISOString(),
+    };
+    setOperators((prev) => [...prev, newOperator]);
+    return newOperator;
+  };
+
+  const updateOperator = (id: string, updates: Partial<Operator>) => {
+    setOperators((prev) =>
+      prev.map((operator) =>
+        operator.id === id ? { ...operator, ...updates } : operator,
+      ),
+    );
+  };
+
+  const deleteOperator = (id: string) => {
+    setOperators((prev) => prev.filter((operator) => operator.id !== id));
+  };
+
+  return { operators, addOperator, updateOperator, deleteOperator };
 }
