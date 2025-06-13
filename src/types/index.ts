@@ -13,6 +13,7 @@ export interface Visitor {
 export interface Employee {
   id: string;
   fullName: string;
+  cardNumber: string;
   position: string;
   department: string;
   building: string;

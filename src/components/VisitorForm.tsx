@@ -20,8 +20,6 @@ interface VisitorFormData {
   fullName: string;
   cardNumber: string;
   destination: string;
-  visitDate: string;
-  visitTime: string;
   purpose: string;
 }
 
@@ -41,8 +39,14 @@ const VisitorForm = () => {
   const onSubmit = async (data: VisitorFormData) => {
     setIsSubmitting(true);
     try {
+      const now = new Date();
+      const visitDate = now.toISOString().split("T")[0];
+      const visitTime = now.toTimeString().split(" ")[0].slice(0, 5);
+
       addVisitor({
         ...data,
+        visitDate,
+        visitTime,
         status: "pending",
       });
 
@@ -124,40 +128,6 @@ const VisitorForm = () => {
                 <SelectItem value="Склад">Склад</SelectItem>
               </SelectContent>
             </Select>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="visitDate">Дата визита *</Label>
-              <Input
-                id="visitDate"
-                type="date"
-                {...register("visitDate", {
-                  required: "Дата визита обязательна",
-                })}
-              />
-              {errors.visitDate && (
-                <p className="text-sm text-red-600">
-                  {errors.visitDate.message}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="visitTime">Время визита *</Label>
-              <Input
-                id="visitTime"
-                type="time"
-                {...register("visitTime", {
-                  required: "Время визита обязательно",
-                })}
-              />
-              {errors.visitTime && (
-                <p className="text-sm text-red-600">
-                  {errors.visitTime.message}
-                </p>
-              )}
-            </div>
           </div>
 
           <div className="space-y-2">

@@ -26,6 +26,7 @@ import { Employee } from "@/types";
 
 interface EmployeeFormData {
   fullName: string;
+  cardNumber: string;
   position: string;
   department: string;
   building: string;
@@ -81,6 +82,7 @@ const EmployeeManagement = () => {
   const handleEdit = (employee: Employee) => {
     setEditingEmployee(employee);
     setValue("fullName", employee.fullName);
+    setValue("cardNumber", employee.cardNumber);
     setValue("position", employee.position);
     setValue("department", employee.department);
     setValue("building", employee.building);
@@ -150,6 +152,24 @@ const EmployeeManagement = () => {
                 </div>
 
                 <div className="space-y-2">
+                  <Label htmlFor="cardNumber">Номер карты *</Label>
+                  <Input
+                    id="cardNumber"
+                    {...register("cardNumber", {
+                      required: "Номер карты обязателен",
+                    })}
+                    placeholder="12345678"
+                  />
+                  {errors.cardNumber && (
+                    <p className="text-sm text-red-600">
+                      {errors.cardNumber.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
                   <Label htmlFor="position">Должность *</Label>
                   <Input
                     id="position"
@@ -161,6 +181,22 @@ const EmployeeManagement = () => {
                   {errors.position && (
                     <p className="text-sm text-red-600">
                       {errors.position.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="department">Отдел *</Label>
+                  <Input
+                    id="department"
+                    {...register("department", {
+                      required: "Отдел обязателен",
+                    })}
+                    placeholder="IT-отдел"
+                  />
+                  {errors.department && (
+                    <p className="text-sm text-red-600">
+                      {errors.department.message}
                     </p>
                   )}
                 </div>
@@ -292,6 +328,10 @@ const EmployeeManagement = () => {
 
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
                         <div>
+                          <span className="font-medium">Номер карты:</span>
+                          <p>{employee.cardNumber}</p>
+                        </div>
+                        <div>
                           <span className="font-medium">Должность:</span>
                           <p>{employee.position}</p>
                         </div>
@@ -303,18 +343,18 @@ const EmployeeManagement = () => {
                           <span className="font-medium">Корпус:</span>
                           <p>{employee.building || "Не указан"}</p>
                         </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4 text-sm text-gray-600 mt-2">
                         <div>
                           <span className="font-medium">Телефон:</span>
                           <p>{employee.phone || "Не указан"}</p>
                         </div>
+                        <div>
+                          <span className="font-medium">Email:</span>
+                          <p>{employee.email || "Не указан"}</p>
+                        </div>
                       </div>
-
-                      {employee.email && (
-                        <p className="text-sm text-gray-600 mt-2">
-                          <span className="font-medium">Email:</span>{" "}
-                          {employee.email}
-                        </p>
-                      )}
                     </div>
 
                     <div className="flex gap-2 ml-4">
