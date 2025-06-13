@@ -117,10 +117,30 @@ export function useBuildings() {
 }
 
 export function useOperators() {
-  const [operators, setOperators] = useLocalStorage<Operator[]>(
-    "operators",
-    [],
-  );
+  const [operators, setOperators] = useLocalStorage<Operator[]>("operators", [
+    {
+      id: "1",
+      fullName: "Главный администратор",
+      username: "admin",
+      password: "admin123",
+      role: "admin",
+      permissions: ["all"],
+      shift: "morning",
+      status: "active",
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: "2",
+      fullName: "Оператор смены",
+      username: "operator",
+      password: "pass123",
+      role: "operator",
+      permissions: ["view_visitors", "manage_visitors"],
+      shift: "morning",
+      status: "active",
+      createdAt: new Date().toISOString(),
+    },
+  ]);
 
   const addOperator = (operator: Omit<Operator, "id" | "createdAt">) => {
     const newOperator: Operator = {
@@ -145,4 +165,40 @@ export function useOperators() {
   };
 
   return { operators, addOperator, updateOperator, deleteOperator };
+}
+
+export function useAuth() {
+  const [currentUser, setCurrentUser] = useLocalStorage<Operator | null>(
+    "currentUser",
+    null,
+  );
+
+  const login = (username: string, password: string): boolean => {
+    const { operators } = useOperators();
+    const user = operators.find(
+      (op) =>
+        op.username === username &&
+        op.password === password &&
+        op.status === "active",
+    );
+
+    if (user) {
+      setCurrentUser(user);
+      return true;
+    }
+    return false;
+  };
+
+  const logout = () => {
+    setCurrentUser(null);
+  };
+
+  const isAuthenticated = currentUser !== null;
+
+  return {
+    currentUser,
+    login,
+    logout,
+    isAuthenticated,
+  };
 }

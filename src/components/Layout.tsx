@@ -3,18 +3,45 @@ import { Outlet, Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
+import { useAuth } from "@/hooks/useAuth";
+import { Badge } from "@/components/ui/badge";
 
 const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const location = useLocation();
+  const { currentUser, logout } = useAuth();
 
   const navigation = [
-    { name: "Главная", href: "/", icon: "Home" },
-    { name: "Регистрация посетителей", href: "/visitors", icon: "Users" },
-    { name: "Управление сотрудниками", href: "/employees", icon: "UserCheck" },
-    { name: "Управление корпусами", href: "/buildings", icon: "Building" },
-    { name: "Операторы", href: "/operators", icon: "UserCog" },
+    { name: "Главная", href: "/", icon: "Home", roles: ["admin", "operator"] },
+    {
+      name: "Регистрация посетителей",
+      href: "/visitors",
+      icon: "Users",
+      roles: ["admin", "operator"],
+    },
+    {
+      name: "Управление сотрудниками",
+      href: "/employees",
+      icon: "UserCheck",
+      roles: ["admin", "operator"],
+    },
+    {
+      name: "Управление корпусами",
+      href: "/buildings",
+      icon: "Building",
+      roles: ["admin"],
+    },
+    {
+      name: "Операторы",
+      href: "/operators",
+      icon: "UserCog",
+      roles: ["admin"],
+    },
   ];
+
+  const filteredNavigation = navigation.filter(
+    (item) => currentUser && item.roles.includes(currentUser.role),
+  );
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -31,9 +58,19 @@ const Layout = () => {
               <Icon name="Shield" size={20} className="text-white" />
             </div>
             {sidebarOpen && (
-              <div>
+              <div className="flex-1">
                 <h1 className="font-bold text-gray-900">Бюро пропусков</h1>
-                <p className="text-xs text-gray-500">Система управления</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <Badge
+                    variant={
+                      currentUser?.role === "admin" ? "default" : "secondary"
+                    }
+                  >
+                    {currentUser?.role === "admin"
+                      ? "Администратор"
+                      : "Оператор"}
+                  </Badge>
+                </div>
               </div>
             )}
           </div>
@@ -41,7 +78,7 @@ const Layout = () => {
 
         <nav className="flex-1 p-4">
           <ul className="space-y-2">
-            {navigation.map((item) => (
+            {filteredNavigation.map((item) => (
               <li key={item.name}>
                 <Link
                   to={item.href}
@@ -60,7 +97,31 @@ const Layout = () => {
           </ul>
         </nav>
 
-        <div className="p-4 border-t">
+        <div className="p-4 border-t space-y-2">
+          {sidebarOpen && currentUser && (
+            <div className="text-xs text-gray-600 mb-2">
+              <p className="font-medium">{currentUser.fullName}</p>
+              <p>
+                Смена:{" "}
+                {currentUser.shift === "morning"
+                  ? "Утренняя"
+                  : currentUser.shift === "evening"
+                    ? "Вечерняя"
+                    : "Ночная"}
+              </p>
+            </div>
+          )}
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={logout}
+            className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+          >
+            <Icon name="LogOut" size={16} />
+            {sidebarOpen && <span className="ml-2">Выйти</span>}
+          </Button>
+
           <Button
             variant="ghost"
             size="sm"
